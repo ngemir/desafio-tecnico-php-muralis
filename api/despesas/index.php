@@ -1,83 +1,113 @@
 <?php
-
-  if($_SERVER["REQUEST_METHOD"] == "GET"){
-    //conecta com Banco de dados
-    include('../../connection/connection.php');
-    $mesAtual = date('m' ,time());
-    $anoAtual = date('Y' ,time());
-    $inicioMes = 01;
-    $fimMes = 31;
-    //criação do array para ser enviado como resposta
-    $resultado = [];
-
-    //Pega todas as despesas
-    $despesa = $conexaobd->query('SELECT * FROM despesas WHERE data_compra BETWEEN ("' . $anoAtual . '/'. $mesAtual . '/' . $inicioMes . '") AND ("' . $anoAtual . '/'. $mesAtual . '/' . $fimMes . '")');
-    
-    
-    //Fazer repetição pra fazer o tratamento da Foreign key e data, e preparação de envio
-    foreach($despesa as $cada){
-      //Pega categoria da Despesa registrada
-      $categoriaDaDespesa = mysqli_fetch_array($conexaobd->query('SELECT nome FROM categorias WHERE ' . $cada['categoria_id'] . ' =  id'))[0];
-      //Pega o tipo de pagamento da Despesa Registrada
-      $pagamentoDaDespesa = mysqli_fetch_array($conexaobd->query('SELECT tipo FROM tipos_pagamento WHERE ' . $cada['tipo_pagamento_id'] . ' = id' ))[0];
-      
-      //tratamento para data que vem do banco de dados
-      $data = strtotime($cada['data_compra']);
-      $dataConvertido = date('d-m-Y', $data );
-
-      //cria o array de 1 despesa
-      $cadaDespesa = array("id" => $cada['id'],"descricao" => $cada['descricao'], "data" => $dataConvertido, "valor" => $cada['valor'], "categoria" => $categoriaDaDespesa, "pagamento" => $pagamentoDaDespesa);
-
-      //insere no array que será a resposta da requisição
-      array_push($resultado, $cadaDespesa);
-
-      //Serve para visualizar na resposta da requisição pelo software de requisição (ex: Postman, Insomniac)
-      // echo 'Data: ' . $dataConvertido . '</br> Descrição: ' . $cada['descricao'] . ' </br> Categoria: ' . $categoriaDaDespesa . ' </br> Tipo de Pagamento: ' . $pagamentoDaDespesa;
+  //Tratamento do request PUT e DELETE
+  function parseRequest()
+  {
+    // Fetch content and determine boundary
+    $raw_data = file_get_contents('php://input');
+    $boundary = substr($raw_data, 0, strpos($raw_data, "\r\n"));
+  
+    // Fetch each part
+    $parts = array_slice(explode($boundary, $raw_data), 1);
+    $data = array();
+  
+    foreach ($parts as $part) {
+      // If this is the last part, break
+      if ($part == "--\r\n") break;
+  
+      // Separate content from headers
+      $part = ltrim($part, "\r\n");
+      list($raw_headers, $body) = explode("\r\n\r\n", $part, 2);
+  
+      // Parse the headers list
+      $raw_headers = explode("\r\n", $raw_headers);
+      $headers = array();
+      foreach ($raw_headers as $header) {
+        list($name, $value) = explode(':', $header);
+        $headers[strtolower($name)] = ltrim($value, ' ');
+      }
+  
+      // Parse the Content-Disposition to get the field name, etc.
+      if (isset($headers['content-disposition'])) {
+        $filename = null;
+        preg_match(
+          '/^(.+); *name="([^"]+)"(; *filename="([^"]+)")?/',
+          $headers['content-disposition'],
+          $matches
+        );
+        list(, $type, $name) = $matches;
+        isset($matches[4]) and $filename = $matches[4];
+  
+        // handle your fields here
+        switch ($name) {
+            // this is a file upload
+          case 'userfile':
+            file_put_contents($filename, $body);
+            break;
+  
+            // default for all other files is to populate $data
+          default:
+            $data[$name] = substr($body, 0, strlen($body) - 2);
+            break;
+        }
+      }
     }
-
-    //Preparar para envio
-
-    $resposta = [
-      "data" => $resultado,
-      "success" => true
-    ];
-
-    header("Content-Type: application/json");
-    echo json_encode($resposta);
-
+    return $data;
+  }
+  //Mostrar o que está passando
+  function teste($dados){
+    echo "<pre>";
+    var_dump($dados);
+    echo "</pre>";
+  }
+  //Lida com dados duplicados que vem do banco de dados
+  function trataDadosDuplicados($conexao, $dados){
+    //tratamento para data que vem do banco de dados
+    $data = strtotime($dados['data_compra']);
+    $dataConvertido = date('d-m-Y', $data );
+  
+    //Tratamento da exibição de Categoria e Tipo de pagamento
+    $categoriaDaDespesaStmt = $conexao->query("SELECT nome FROM categorias WHERE id = ". $dados['categoria_id']);
+    $categoriaDaDespesa = $categoriaDaDespesaStmt->fetch()['nome'];
+  
+    $pagamentoDaDespesaStmt = $conexao->query("SELECT tipo FROM tipos_pagamento WHERE id = ". $dados['tipo_pagamento_id']);
+    $pagamentoDaDespesa = $pagamentoDaDespesaStmt->fetch()['tipo'];
+  
+    $retorno = array(
+      "id" => $dados['id'],
+      "descricao" => $dados['descricao'], 
+      "data" => $dataConvertido, 
+      "valor" => $dados['valor'], 
+      "categoria" => $categoriaDaDespesa, 
+      "pagamento" => $pagamentoDaDespesa
+    );
+    
+    return $retorno;
+  }
+  function conectaDB(){
+    //conecta com Banco de dados
+    require('../../connection/connection.php');
+    $db = new ConexaoBD();
+    return $db;
   }
 
-  if($_SERVER["REQUEST_METHOD"] == "POST"){
-    //conecta com Banco de dados
-    include('../../connection/connection.php');
 
-    if ($conexaobd->query("INSERT INTO despesas(valor, data_compra, descricao, tipo_pagamento_id, categoria_id) VALUES ( '" . $_POST['valor'] . "' , '" . $_POST['data'] . "' , '" . $_POST['descricao'] . "' , '" . $_POST['pagamento'] . "' , '" . $_POST['categoria'] .  "')") === TRUE) {
-      echo "O novo valor foi inserido com sucesso";
-      
-      $idDoInsert = $conexaobd->insert_id;
-
-      $resposta = [
-        "data" => $idDoInsert,
-        "success" => true
-      ];
-  
-      header("Content-Type: application/json");
-      echo json_encode($resposta);
-
-    } else {
-      echo "Error: Falha ao inserir registro <br>" . $conexaobd->error;
-      $resposta = [
-        "data" => [],
-        "success" => false
-      ];
-  
-      header("Content-Type: application/json");
-      echo json_encode($resposta);
-    }
-    
+  //GET
+  if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    require('./consultaDespesas/consultar.php');
   }
 
-  if($_SERVER["REQUEST_METHOD"] == "PUT"){
+  //POST
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require('./cadastraDespesas/cadastrar.php');
+  }
 
+  //PUT
+  if ($_SERVER["REQUEST_METHOD"] == "PUT") {
+    require('./alterarDespesa/alterar.php');
+  }
+
+  //DELETE
+  if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
+    require('./deletarDespesa/deletar.php');
   }
 ?>

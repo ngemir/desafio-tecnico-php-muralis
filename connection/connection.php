@@ -1,9 +1,26 @@
 <?php
+  class ConexaoBD{
+    private $hospedagem = 'localhost';
+    private $bancodedados = 'muralisphp';
+    private $usuario = 'root';
+    private $senha = '';
+    
+    public $conexao;
 
-  $host = 'localhost';
-  $usuario = 'root';
-  $senha = '';
-  $bancodedados = 'muralisphp';
+    public function conecta(){
+      try{
+        $this->conexao = new PDO('mysql:host='.$this->hospedagem.';dbname='.$this->bancodedados,$this->usuario,$this->senha);
+        return $this->conexao;
+      }catch (PDOException $e){
+        print "Error!: " . $e->getMessage() . "<br/>";
+        die();
+      }
+    }
 
-  $conexaobd = new mysqli($host, $usuario, $senha, $bancodedados);
+    public function desconecta(){
+      $this->conexao = null;
+    }
+
+
+  }
 ?>
