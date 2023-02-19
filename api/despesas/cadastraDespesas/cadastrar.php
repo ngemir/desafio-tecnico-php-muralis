@@ -1,4 +1,5 @@
 <?php
+
 //pega os dados do Post
 $inputValor = $_POST['valor'];
 $inputData = $_POST['data'];
@@ -6,6 +7,7 @@ $inputDescricao = $_POST['descricao'];
 $inputPagamento = $_POST['pagamento'];
 $inputCategoria = $_POST['categoria'];
 $inputCep = $_POST['cep'];
+$inputEnderecoNumero = $_POST['numero'];
 
 try {
   $db = conectaDB();
@@ -26,7 +28,7 @@ try {
     array_push($idCategoria, $id['id']);
   }
 
-  $sql = "INSERT INTO despesas(valor, data_compra, descricao, tipo_pagamento_id, categoria_id, cep) VALUES ( '" . $inputValor . "' , '" . $inputData . "' , '" . $inputDescricao . "' , '" . $idTipoPagamento[0] . "' , '" . $idCategoria[0] . "' , '" . $inputCep .  "')";
+  $sql = "INSERT INTO despesas(valor, data_compra, descricao, tipo_pagamento_id, categoria_id, cep, endereco_numero) VALUES ( '" . $inputValor . "' , '" . $inputData . "' , '" . $inputDescricao . "' , '" . $idTipoPagamento[0] . "' , '" . $idCategoria[0] . "' , '" . $inputCep .  "' , " . $inputEnderecoNumero . ")";
 
   $stmt = $conexaobd->prepare($sql);
   $stmt->execute();

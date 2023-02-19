@@ -5,4 +5,4 @@ A fazer:
 
 - Conseguir gerar PDF
 - Conseguir gerar Excel
-- API Busca CEP
+- API Busca CEP (Pronto)

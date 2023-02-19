@@ -71,14 +71,15 @@
   
     $pagamentoDaDespesaStmt = $conexao->query("SELECT tipo FROM tipos_pagamento WHERE id = ". $dados['tipo_pagamento_id']);
     $pagamentoDaDespesa = $pagamentoDaDespesaStmt->fetch()['tipo'];
-  
+    
     $retorno = array(
       "id" => $dados['id'],
       "descricao" => $dados['descricao'], 
       "data" => $dataConvertido, 
       "valor" => $dados['valor'], 
       "categoria" => $categoriaDaDespesa, 
-      "pagamento" => $pagamentoDaDespesa
+      "pagamento" => $pagamentoDaDespesa,
+      "cep" => buscaCEP($dados['cep'], strval($dados['endereco_numero']))
     );
     
     return $retorno;
@@ -88,6 +89,41 @@
     require('../../connection/connection.php');
     $db = new ConexaoBD();
     return $db;
+  }
+
+  function requisitar($site){
+    $req = curl_init();
+    //configura o site para realizar requisicao
+    curl_setopt($req, CURLOPT_URL, $site);
+    //configura pra que cURL retorne string do site
+    curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+    //executa requisicao e armazena resposta na variavel
+    $resposta = curl_exec($req);
+    //finaliza requisicao
+    curl_close($req);
+
+    return $resposta;
+  }
+
+  function buscaCEP($cep, $numero) {
+    $valor = '';
+    $resposta = '';
+    //converte valor recebido para string sem traço
+    if(gettype($cep) == 'integer'){
+      $valor = strval($cep);
+    }elseif(gettype($cep) == 'string'){
+      $valor = str_replace('-','',$cep);
+    }
+    
+    //validação do CEP
+    if(strlen($valor) !== 8){
+      $resposta = 'CEP incorreto';
+    }else{
+      $resposta = json_decode(requisitar('viacep.com.br/ws/'.$valor.'/json'));
+      $resposta->numero = $numero;
+    }
+
+    return $resposta;
   }
 
 
