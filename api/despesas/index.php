@@ -75,7 +75,7 @@
     $retorno = array(
       "id" => $dados['id'],
       "descricao" => $dados['descricao'], 
-      "data" => $dataConvertido, 
+      "data_compra" => $dataConvertido, 
       "valor" => $dados['valor'], 
       "categoria" => $categoriaDaDespesa, 
       "pagamento" => $pagamentoDaDespesa,

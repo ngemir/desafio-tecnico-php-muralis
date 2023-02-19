@@ -2,12 +2,16 @@
 
 //pega os dados do Post
 $inputValor = $_POST['valor'];
-$inputData = $_POST['data'];
+$inputData = $_POST['data_compra'];
 $inputDescricao = $_POST['descricao'];
 $inputPagamento = $_POST['pagamento'];
 $inputCategoria = $_POST['categoria'];
 $inputCep = $_POST['cep'];
 $inputEnderecoNumero = $_POST['endereco_numero'];
+
+//Tratamento da data
+$inputData = strtotime($inputData);
+$inputData = date('Y-m-d', $inputData);
 
 try {
   $db = conectaDB();

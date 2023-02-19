@@ -7,6 +7,12 @@ $idReferencia = $_PUT['id'];
 $oqueAlterar = $_PUT['oqueAlterar'];
 $dadosAlterar = $_PUT['dadosAlterar'];
 
+if($oqueAlterar == 'data_compra'){
+  //Tratamento da data
+  $dadosAlterar = strtotime($dadosAlterar);
+  $dadosAlterar = date('Y-m-d', $dadosAlterar);
+}
+
 try {
   //Conexão com banco de dados
   $db = conectaDB();

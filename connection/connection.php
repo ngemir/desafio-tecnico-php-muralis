@@ -1,7 +1,7 @@
 <?php
   class ConexaoBD{
     private $hospedagem = 'localhost';
-    private $bancodedados = 'muralisphp';
+    private $bancodedados = 'phpmuralis';
     private $usuario = 'root';
     private $senha = '';
     

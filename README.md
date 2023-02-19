@@ -17,7 +17,7 @@ A API tem como objetivo cumprir exigência do [Teste Técnico PHP da Muralis](./
 |Atributos|Dados|
 |---------|-----|
 |valor|Integer|
-|data|YYYY-MM-DD|
+|data_compra|YYYY-MM-DD|
 |descricao|String|
 pagamento|Dinheiro/Débito/Crédito/Pix|
 |categoria|escreva o nome da categoria registrada|
@@ -28,6 +28,7 @@ Detalhe: a categoria também pode ser cadastrada em `http://localhost:80/api/cat
 |Atributos|Dados|
 |---------|-----|
 |nome|String|
+|descricao|String|
 
 >Retorno será um JSON assim:
 ```
@@ -43,7 +44,7 @@ Detalhe: a categoria também pode ser cadastrada em `http://localhost:80/api/cat
 |Atributos|Dados|
 |---------|-----|
 |id|Integer|
-|oqueAlterar| Algum dos atributos do registro (valor, data, descricao, pagamento, categoria, cep e numero)|
+|oqueAlterar| Algum dos atributos do registro (valor, data_compra, descricao, pagamento, categoria, cep e endereco_numero)|
 |dadosAlterar| Valor de acordo com cada campo. (ex: pagamento = Débito)
 
 > Retorno será um JSON assim para confirmar a alteração feita (Ex: Alterando campo `descricao` do `id` = 1)

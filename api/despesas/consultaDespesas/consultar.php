@@ -13,7 +13,7 @@ function pegaDados()
     //Pega todas as despesas
     $db = conectaDB();
     $conexao = $db->conecta();
-    $despesaStmt = $conexao->query('SELECT * FROM despesas WHERE data_compra BETWEEN ("' . $anoAtual . '/' . $mesAtual . '/' . $inicioMes . '") AND ("' . $anoAtual . '/' . $mesAtual . '/' . $fimMes . '") ORDER BY data_compra ASC');
+    $despesaStmt = $conexao->query('SELECT * FROM despesas WHERE data_compra BETWEEN ("' . $anoAtual . '/' . $mesAtual . '/' . $inicioMes . '") AND ("' . $anoAtual . '/' . $mesAtual . '/' . $fimMes . '") ORDER BY id ASC');
 
     $despesa = $despesaStmt->fetchAll();
 
@@ -50,7 +50,7 @@ function pegaDadosPeriodo($periodoDe, $periodoAte)
     //Pega todas as despesas
     $db = conectaDB();
     $conexao = $db->conecta();
-    $despesaStmt = $conexao->query('SELECT * FROM despesas WHERE data_compra BETWEEN ("' . $periodoDe . '") AND ("' . $periodoAte . '") ORDER BY data_compra ASC');
+    $despesaStmt = $conexao->query('SELECT * FROM despesas WHERE data_compra BETWEEN ("' . $periodoDe . '") AND ("' . $periodoAte . '") ORDER BY id ASC');
 
     $despesa = $despesaStmt->fetchAll();
 
@@ -87,7 +87,7 @@ function pegaTodosDados()
     //Pega todas as despesas
     $db = conectaDB();
     $conexao = $db->conecta();
-    $despesaStmt = $conexao->query('SELECT * FROM despesas ORDER BY data_compra ASC');
+    $despesaStmt = $conexao->query('SELECT * FROM despesas ORDER BY id ASC');
 
     $despesa = $despesaStmt->fetchAll();
 
@@ -125,7 +125,6 @@ if(isset($_GET['formato']) == true){
   if(isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true){
     if($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== ''){
       $periodoDe = $_GET['periodoDe'];
-      
       $periodoAte = $_GET['periodoAte'];
       
       $periodoDe = strtotime($periodoDe);
@@ -139,7 +138,7 @@ if(isset($_GET['formato']) == true){
   //Verifica qual formato de dados foi solicidado
   if ($_GET['formato'] == '' || $_GET['formato'] == 'json') {
     //Validação se existe período exigido, senão pega todas despesas
-    if(isset($_GET['tudo']) == true){
+    if($_GET['tudo'] == 'true'){
       $resposta = pegaTodosDados();
     }elseif(isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true){
       if($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== ''){
@@ -193,7 +192,7 @@ if(isset($_GET['formato']) == true){
     }
 
     // Conecta no banco de dados (A Lib funciona com mysqli_connect)
-    $link = mysqli_connect('localhost', 'root', '', 'muralisphp');
+    $link = mysqli_connect('localhost', 'root', '', 'phpmuralis');
     
     // Classe da lib FPDF
     $pdf = new PDF();
@@ -209,7 +208,7 @@ if(isset($_GET['formato']) == true){
     );
 
     //Validação se existe período exigido, senão pega todas despesas
-    if(isset($_GET['tudo']) == true) {
+    if($_GET['tudo'] == 'true') {
       $pdf->Table($link, 'SELECT * FROM despesas ORDER BY id ASC', $prop);
     }elseif(isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true){
       if($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== ''){
@@ -231,16 +230,20 @@ if(isset($_GET['formato']) == true){
   }
 
   if ($_GET['formato'] == 'teste') {
-    $link = mysqli_connect('localhost', 'root', '', 'muralisphp');
+    $link = mysqli_connect('localhost', 'root', '', 'phpmuralis');
     $result = mysqli_query($link, "SELECT * FROM despesas", MYSQLI_USE_RESULT);
+    
+    $cabeca = ['id','valor','data compra','descricao','tipo de pagamento', 'categoria', 'cep', 'numero'];
+    
     foreach($result as $obj){
       $obj = $result->fetch_object();
-      $diaMesAno = $obj->data_compra;
-      $diaMesAno = substr($diaMesAno, 0, 10);
-      $diaMesAno = strtotime($diaMesAno);
-      $diaMesAno = date('d-m-Y', $diaMesAno);
-      teste($diaMesAno);
     }
+    
+    $arquivo = fopen('despesa.csv', 'w');
+
+    fputcsv($arquivo, $cabeca, ';');
+
+    fclose($arquivo);
 
   }
 }
