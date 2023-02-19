@@ -20,23 +20,56 @@ class PDF_MySQL_Table extends FPDF
 
     function TableHeader()
     {
-        $this->SetFont('Arial', 'B', 12);
+        $this->SetFont('Arial', 'B', 8);
         $this->SetX($this->TableX);
         $fill = !empty($this->HeaderColor);
         if ($fill)
             $this->SetFillColor($this->HeaderColor[0], $this->HeaderColor[1], $this->HeaderColor[2]);
         $this->SetTextColor($this->textColor[0], $this->textColor[1], $this->textColor[2]);
-        foreach ($this->aCols as $col)
-            $this->Cell($col['w'], 6, $col['c'], 1, 0, 'C', $fill);
+        foreach ($this->aCols as $col) {
+            //Altera o nome da coluna aqui
+            if ($col['f'] == 0) {
+                $col['c'] = 'ID';
+            }
+            if ($col['f'] == 1) {
+                $col['c'] = 'Valor';
+            }
+            if ($col['f'] == 2) {
+                $col['c'] = 'Data';
+            }
+            if ($col['f'] == 3) {
+                $col['c'] = 'Descricao da Despesa';
+            }
+            if ($col['f'] == 4) {
+                $col['c'] = 'Pagamen.';
+            }
+            if ($col['f'] == 5) {
+                $col['c'] = 'Categoria';
+            }
+            if ($col['f'] == 6) {
+                $col['c'] = 'CEP';
+            }
+            if ($col['f'] == 7) {
+                $col['c'] = 'Numero';
+            }
+
+            if ($col['f'] == 2) {
+                $this->Cell($col['w'], 6, $col['c'], 1, 0, 'C', $fill);
+            } elseif ($col['f'] == 3) {
+                $this->Cell($col['w'], 6, $col['c'], 1, 0, 'C', $fill);
+            } else {
+                $this->Cell($col['w'], 6, $col['c'], 1, 0, 'L', $fill);
+            }
+        }
         $this->Ln();
         $this->SetTextColor('0', '0', '0');
     }
 
     function Row($data)
     {
-        $data['data_compra'] = substr($data['data_compra'], 0, 10);
-        $data['data_compra'] = strtotime($data['data_compra']);
-        $data['data_compra'] = date('d-m-Y', $data['data_compra']);
+        $data[2] = substr($data[2], 0, 10);
+        $data[2] = strtotime($data[2]);
+        $data[2] = date('d-m-Y', $data[2]);
 
         $this->SetX($this->TableX);
         $ci = $this->ColorIndex;
@@ -44,11 +77,6 @@ class PDF_MySQL_Table extends FPDF
         if ($fill)
             $this->SetFillColor($this->RowColors[$ci][0], $this->RowColors[$ci][1], $this->RowColors[$ci][2]);
         foreach ($this->aCols as $col) {
-            // if ($data[$col['f']] == $data['data_compra']) {
-            //     $data['data_compra'] = substr($data['data_compra'], 0, 10);
-            //     $data['data_compra'] = strtotime($data['data_compra']);
-            //     $data['data_compra'] = date('d-m-Y', $data['data_compra']);
-            // };
             $this->Cell($col['w'], 5, $data[$col['f']], 1, 0, $col['a'], $fill);
         }
         $this->Ln();
@@ -61,6 +89,33 @@ class PDF_MySQL_Table extends FPDF
         $TableWidth = 0;
         foreach ($this->aCols as $i => $col) {
             $w = $col['w'];
+
+            //Altera a largura da coluna aqui usando o nome definido e numero
+            if ($col['f'] == 0) {
+                $w = 10;
+            }
+            if ($col['f'] == 1) {
+                $w = 15;
+            }
+            if ($col['f'] == 2) {
+                $w = 25;
+            }
+            if ($col['f'] == 3) {
+                $w = $width - 115;
+            }
+            if ($col['f'] == 4) {
+                $w = 15;
+            }
+            if ($col['f'] == 5) {
+                $w = 15;
+            }
+            if ($col['f'] == 6) {
+                $w = 20;
+            }
+            if ($col['f'] == 7) {
+                $w = 15;
+            }
+
             if ($w == -1)
                 $w = $width / count($this->aCols);
             elseif (substr($w, -1) == '%')

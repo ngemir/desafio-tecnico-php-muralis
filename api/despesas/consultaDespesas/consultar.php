@@ -52,7 +52,24 @@ if ($_GET['formato'] == '' || $_GET['formato'] == 'json') {
 
 // envia os dados em formato pdf
 if ($_GET['formato'] == 'pdf') {
+  //caminho da lib usada para gerar PDF
   require('../../library/fpdf/PDF_MySQL_Table.php');
+
+  //Verificação se existe período informado da qual quer
+  if(isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true){
+    if($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== ''){
+      $periodoDe = $_GET['periodoDe'];
+      
+      $periodoAte = $_GET['periodoAte'];
+      
+      $periodoDe = strtotime($periodoDe);
+      $periodoAte = strtotime($periodoAte);
+      
+      $periodoDe = date('Y-m-d', $periodoDe);
+      $periodoAte = date('Y-m-d', $periodoAte);
+    }
+  }
+  
   class PDF extends PDF_MySQL_Table
   {
     // Page header
@@ -64,7 +81,7 @@ if ($_GET['formato'] == 'pdf') {
       $this->SetFillColor(52, 218, 247);
       $this->Cell(0, 10, 'Despesa Mensal', 1, 0, 'C', true);
       // Line break
-      $this->Ln(20);
+      $this->Ln(10);
     }
 
     // Page footer
@@ -89,12 +106,24 @@ if ($_GET['formato'] == 'pdf') {
   $pdf->AddPage('L', 'A4', 0);
   
   // Cria tabela de acordo com a conexão no banco de dados
+  // definição da propriedade da tabela
   $prop = array(
     'HeaderColor' => array('0','0','0'),
-    'textColor' => array('207', '112', '112')    
+    'textColor' => array('255', '255', '255')    
   );
-  $pdf->Table($link, 'SELECT * FROM despesas ORDER BY id ASC', $prop);
 
+  //Validação se existe período exigido, senão pega todas despesas
+  if(isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true){
+    if($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== ''){
+      $pdf->Table($link, 'SELECT * FROM despesas WHERE data_compra BETWEEN "' . $periodoDe . '" AND "' . $periodoAte . '" ORDER BY id ASC', $prop);
+    }else{
+      $pdf->Table($link, 'SELECT * FROM despesas ORDER BY id ASC', $prop);
+    }
+  }else{
+    $pdf->Table($link, 'SELECT * FROM despesas ORDER BY id ASC', $prop);
+  }
+
+  //Exibir PDF
   $pdf->Output('I', 'Despesa Mensal', true);
 }
 
