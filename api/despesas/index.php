@@ -120,7 +120,7 @@
       $resposta = 'CEP incorreto';
     }else{
       $resposta = json_decode(requisitar('viacep.com.br/ws/'.$valor.'/json'));
-      $resposta->numero = $numero;
+      $resposta->endereco_numero = $numero;
     }
 
     return $resposta;

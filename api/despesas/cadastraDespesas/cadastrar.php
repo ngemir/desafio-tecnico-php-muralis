@@ -7,7 +7,7 @@ $inputDescricao = $_POST['descricao'];
 $inputPagamento = $_POST['pagamento'];
 $inputCategoria = $_POST['categoria'];
 $inputCep = $_POST['cep'];
-$inputEnderecoNumero = $_POST['numero'];
+$inputEnderecoNumero = $_POST['endereco_numero'];
 
 try {
   $db = conectaDB();
@@ -33,14 +33,13 @@ try {
   $stmt = $conexaobd->prepare($sql);
   $stmt->execute();
 
-
-  echo "O novo valor foi inserido com sucesso";
-
   $idDoInsert = $conexaobd->lastInsertId();
   $db->desconecta();
 
   $resposta = [
-    "data" => $idDoInsert,
+    "data" => [
+      "id" => $idDoInsert
+    ],
     "success" => true
   ];
 

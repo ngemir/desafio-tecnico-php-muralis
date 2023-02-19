@@ -29,7 +29,7 @@ try{
       "antes" => $seraApagadoCorrigido,
       "depois" => $depoisApagado
     ],
-    "success" => false
+    "success" => true
   ];
 
   header("Content-Type: application/json");
