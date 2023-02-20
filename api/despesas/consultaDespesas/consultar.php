@@ -8,8 +8,8 @@ function pegaDados()
     $inicioMes = 01;
     $fimMes = 31;
 
-    
-    
+
+
     //Pega todas as despesas
     $db = conectaDB();
     $conexao = $db->conecta();
@@ -45,8 +45,8 @@ function pegaDados()
 
 function pegaDadosPeriodo($periodoDe, $periodoAte)
 {
-  try {  
-    
+  try {
+
     //Pega todas as despesas
     $db = conectaDB();
     $conexao = $db->conecta();
@@ -82,8 +82,8 @@ function pegaDadosPeriodo($periodoDe, $periodoAte)
 
 function pegaTodosDados()
 {
-  try {  
-    
+  try {
+
     //Pega todas as despesas
     $db = conectaDB();
     $conexao = $db->conecta();
@@ -120,16 +120,16 @@ function pegaTodosDados()
 
 // A consulta Inicia aqui -------------------------
 
-if(isset($_GET['formato']) == true){
+if (isset($_GET['formato']) == true) {
   //Verificação se existe período informado da qual quer
-  if(isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true){
-    if($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== ''){
+  if (isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true) {
+    if ($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== '') {
       $periodoDe = $_GET['periodoDe'];
       $periodoAte = $_GET['periodoAte'];
-      
+
       $periodoDe = strtotime($periodoDe);
       $periodoAte = strtotime($periodoAte);
-      
+
       $periodoDe = date('Y-m-d', $periodoDe);
       $periodoAte = date('Y-m-d', $periodoAte);
     }
@@ -138,15 +138,15 @@ if(isset($_GET['formato']) == true){
   //Verifica qual formato de dados foi solicidado
   if ($_GET['formato'] == '' || $_GET['formato'] == 'json') {
     //Validação se existe período exigido, senão pega todas despesas
-    if($_GET['tudo'] == 'true'){
+    if ($_GET['tudo'] == 'true') {
       $resposta = pegaTodosDados();
-    }elseif(isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true){
-      if($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== ''){
+    } elseif (isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true) {
+      if ($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== '') {
         $resposta = pegaDadosPeriodo($periodoDe, $periodoAte);
-      }else{
+      } else {
         $resposta = pegaDados();
       }
-    }else{
+    } else {
       $resposta = pegaDados();
     }
 
@@ -164,7 +164,7 @@ if(isset($_GET['formato']) == true){
     $anoAtual = date('Y', time());
     $inicioMes = 01;
     $fimMes = 31;
-    
+
     class PDF extends PDF_MySQL_Table
     {
       // Page header
@@ -193,30 +193,30 @@ if(isset($_GET['formato']) == true){
 
     // Conecta no banco de dados (A Lib funciona com mysqli_connect)
     $link = mysqli_connect('localhost', 'root', '', 'phpmuralis');
-    
+
     // Classe da lib FPDF
     $pdf = new PDF();
 
     //Cria página PDF
     $pdf->AddPage('L', 'A4', 0);
-    
+
     // Cria tabela de acordo com a conexão no banco de dados
     // definição da propriedade da tabela
     $prop = array(
-      'HeaderColor' => array('0','0','0'),
-      'textColor' => array('255', '255', '255')    
+      'HeaderColor' => array('0', '0', '0'),
+      'textColor' => array('255', '255', '255')
     );
 
     //Validação se existe período exigido, senão pega todas despesas
-    if($_GET['tudo'] == 'true') {
+    if ($_GET['tudo'] == 'true') {
       $pdf->Table($link, 'SELECT * FROM despesas ORDER BY id ASC', $prop);
-    }elseif(isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true){
-      if($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== ''){
+    } elseif (isset($_GET['periodoDe']) == true && isset($_GET['periodoAte']) == true) {
+      if ($_GET['periodoDe'] !== null && $_GET['periodoAte'] !== null && $_GET['periodoDe'] !== '' && $_GET['periodoAte'] !== '') {
         $pdf->Table($link, 'SELECT * FROM despesas WHERE data_compra BETWEEN "' . $periodoDe . '" AND "' . $periodoAte . '" ORDER BY id ASC', $prop);
-      }else{
+      } else {
         $pdf->Table($link, 'SELECT * FROM despesas WHERE data_compra BETWEEN ("' . $anoAtual . '/' . $mesAtual . '/' . $inicioMes . '") AND ("' . $anoAtual . '/' . $mesAtual . '/' . $fimMes . '") ORDER BY data_compra ASC', $prop);
       }
-    }else{
+    } else {
       $pdf->Table($link, 'SELECT * FROM despesas WHERE data_compra BETWEEN ("' . $anoAtual . '/' . $mesAtual . '/' . $inicioMes . '") AND ("' . $anoAtual . '/' . $mesAtual . '/' . $fimMes . '") ORDER BY data_compra ASC', $prop);
     }
 
@@ -226,24 +226,49 @@ if(isset($_GET['formato']) == true){
 
   //envia os dados em formato excel
   if ($_GET['formato'] == 'excel') {
-    
-  }
-
-  if ($_GET['formato'] == 'teste') {
-    $link = mysqli_connect('localhost', 'root', '', 'phpmuralis');
-    $result = mysqli_query($link, "SELECT * FROM despesas", MYSQLI_USE_RESULT);
-    
-    $cabeca = ['id','valor','data compra','descricao','tipo de pagamento', 'categoria', 'cep', 'numero'];
-    
-    foreach($result as $obj){
-      $obj = $result->fetch_object();
+    // Filter the excel data 
+    function filterData(&$str)
+    {
+      $str = preg_replace("/\t/", "\\t", $str);
+      $str = preg_replace("/\r?\n/", "\\n", $str);
+      if (strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
     }
+
+    // Excel file name for download 
+    $fileName = "members-data_" . date('Y-m-d') . ".xls";
+
+    // Column names 
+    $fields = array('id', 'Valor', 'Data da Compra', 'Descrição', 'Tipo de pagamento', 'Categoria', 'CEP', 'Numero');
+
+    // Display column names as first row 
+    $excelData = implode("\t", array_values($fields)) . "\n";
+
+
+    $conexao = conectaDB();
+    $db = $conexao->conecta();
     
-    $arquivo = fopen('despesa.csv', 'w');
+    // Fetch records from database 
+    $query = $db->query("SELECT * FROM despesas ORDER BY id ASC");
+    
+    if ($query->rowCount() > 0) {
+      // Output each row of the data 
+      while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $lineData = array($row['id'], $row['valor'], $row['data_compra'], $row['descricao'], $row['tipo_pagamento_id'], $row['categoria_id'], $row['cep'], $row['endereco_numero']);
+        array_walk($lineData, 'filterData');
+        $excelData .= implode("\t", array_values($lineData)) . "\n";
+      }
+    } else {
+      $excelData .= 'No records found...' . "\n";
+    }
+    $db = $conexao->desconecta();
 
-    fputcsv($arquivo, $cabeca, ';');
+    // Headers for download 
+    header("Content-Type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment; filename=\"$fileName\"");
 
-    fclose($arquivo);
+    // Render excel data 
+    echo $excelData;
 
+    exit;
   }
 }
