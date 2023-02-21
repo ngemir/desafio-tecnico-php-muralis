@@ -207,8 +207,9 @@ if ($_GET['formato'] == 'pdf') {
     }
   }
 
+  $conexao = new ConexaoBD();
   // Conecta no banco de dados (A Lib funciona com mysqli_connect)
-  $link = mysqli_connect('localhost', 'root', '', 'phpmuralis');
+  $link = mysqli_connect($conexao->getHospedagem(), $conexao->getUsuario(), $conexao->getSenha(), $conexao->getBancoDeDados());
 
   // Classe da lib FPDF
   $pdf = new PDF();

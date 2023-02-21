@@ -7,6 +7,22 @@
     
     public $conexao;
 
+    public function getHospedagem(){
+      return $this->hospedagem;
+    }
+
+    public function getBancoDeDados(){
+      return $this->bancodedados;
+    }
+
+    public function getUsuario(){
+      return $this->usuario;
+    }
+
+    public function getSenha(){
+      return $this->senha;
+    }
+
     public function conecta(){
       try{
         $this->conexao = new PDO('mysql:host='.$this->hospedagem.';dbname='.$this->bancodedados,$this->usuario,$this->senha);
