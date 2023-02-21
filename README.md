@@ -51,7 +51,7 @@ A categoria pode ser cadastrada em `http://localhost/api/categorias/` informando
 |nome|String|
 |descricao|String|
 
-![Registrar Categoria]('./GIF/CadastroDeCategorias.gif')
+![Registrar Categoria](./GIF/CadastroDeCategorias.gif)
 
 ## Como utilizar cada função da API
 ### Registrar Despesa
@@ -65,7 +65,7 @@ pagamento|Dinheiro/Débito/Crédito/Pix|
 |cep|ex: 00000-000|
 |endereco_numero| Integer|
 
-![Registrar Despesas]('./GIF/CadastroDeDespesas.gif')
+![Registrar Despesas](./GIF/CadastroDeDespesas.gif)
 
 >Retorno será um JSON assim:
 ```
@@ -84,7 +84,7 @@ pagamento|Dinheiro/Débito/Crédito/Pix|
 |oqueAlterar| Algum dos atributos do registro (valor, data_compra, descricao, pagamento, categoria, cep e endereco_numero)|
 |dadosAlterar| Valor de acordo com cada campo. (ex: pagamento = Débito)
 
-![Alterar Despesa]('./GIF/AlterarDespesas.gif')
+![Alterar Despesa](./GIF/AlterarDespesas.gif)
 
 > Retorno será um JSON assim para confirmar a alteração feita (Ex: Alterando campo `descricao` do `id` = 1)
 ```
@@ -142,7 +142,7 @@ pagamento|Dinheiro/Débito/Crédito/Pix|
 |---------|-----|
 |id|Integer|
 
-![Excluir Despesa]('./GIF/DeletarDespesas.gif')
+![Excluir Despesa](./GIF/DeletarDespesas.gif)
 
 > Retorna um JSON para falar que excluiu o dado:
 ```
@@ -183,15 +183,15 @@ Temos 3 padrões para consulta.
 1. Formato (`json` | `pdf` | `excel`):
 -  `http://localhost/api/despesas/` e `http://localhost/api/despesas/?formato=json` : Será retornado JSON da despesa do mês atual.
 
-![]('./GIF/ConsultaDespesasFormato.gif');
+![](./GIF/ConsultaDespesasFormato.gif);
 
 - `http://localhost/api/despesas/?formato=pdf` : Será retornado a despesa do mês no formato pdf
 
-![]('./GIF/ConsultaDespesasFormato.gif');
+![](./GIF/ConsultaDespesasFormato.gif);
 
 - `http://localhost/api/despesas/?formato=excel` : Só funciona em navegador, pois irá realizar o download do arquivo Excel com os dados do mês.
 
-![]('./GIF/ConsultaDespesasFormatoExcel.gif');
+![](./GIF/ConsultaDespesasFormatoExcel.gif);
 
 2. Tudo (`true` | `false`)
 - `http://localhost/api/despesas/?tudo=true` : Retorna toda despesa registrada
