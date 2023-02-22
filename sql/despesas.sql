@@ -1,5 +1,5 @@
 CREATE TABLE despesas (
-    id int NOT NULL,
+    id int NOT NULL AUTO_INCREMENT,
     valor REAL(20,2) NOT NULL,
     data_compra DATETIME NOT NULL,
     descricao TEXT NOT NULL,

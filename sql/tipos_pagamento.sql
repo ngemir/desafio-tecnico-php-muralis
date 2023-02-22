@@ -4,4 +4,4 @@ CREATE TABLE tipos_pagamento (
     PRIMARY KEY (id)
 );
 
-INSERT INTO `tipos_pagamento`(`tipo`) VALUES ('Dinheiro'),('Débito'),('Crédito'),('Pix');
+INSERT INTO tipos_pagamento(tipo) VALUES ('Dinheiro'),('Débito'),('Crédito'),('Pix');
