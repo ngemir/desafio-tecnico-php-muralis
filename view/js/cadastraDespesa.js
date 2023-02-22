@@ -9,17 +9,20 @@ function cadastraDespesa(event){
   inputPagamento = event.target[3].value;
   inputCategoria = event.target[4].value;
   inputCep = event.target[5].value;
+  inputNumero = event.target[6].value;
   
   //Aqui é o JSON dos dados que tem que ser o mesmo que o backend cadastrar
-  dados = {
+  const dados = {
     descricao: inputDescricao,
     valor: inputValor,
-    data: inputData,
+    data_compra: inputData,
     pagamento: inputPagamento,
     categoria: inputCategoria,
-    cep: inputCep
+    cep: inputCep,
+    endereco_numero: inputNumero
   }
-
+  
+  console.log(dados);
   //realiza requisição POST
   fetch('./api/despesas/', {
     method: 'POST',

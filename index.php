@@ -6,25 +6,15 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de despesas</title>
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
+  <!-- Exibe Despesas = GET -->
   <?php include './view/components/buscaTabela.php' ?>
 
   <!-- Cadastro de Despesa = Método POST -->
-  <div>
-    <h2>Cadastro de despesa</h2>
-    <form onsubmit="cadastraDespesa(event)" method="post">
-      <input type="text" name="descricao" placeholder="Descrição" required />
-      <input type="number" name="valor" placeholder="Valor R$" required />
-      <input type="date" name="data" id="data" required >
-      <select name="pagamento" id="pagamento" required></select>
-      <select name="categoria" id="categoria" required></select>
-      <input type="text" placeholder="CEP" id="cepInput" />
-      <button type="submit">Cadastrar</button>
-    </form>
-    <p id="respostaCadastro"></p>
-  </div>
+  <?php include './view/components/cadastraDespesa.php'?>
 
   <!-- Alteração de Despesa = Método PUT -->
   <div>

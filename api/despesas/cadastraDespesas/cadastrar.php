@@ -1,5 +1,4 @@
 <?php
-
 //pega os dados do Post
 $inputValor = $_POST['valor'];
 $inputData = $_POST['data_compra'];
