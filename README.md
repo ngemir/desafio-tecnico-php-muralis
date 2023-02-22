@@ -14,6 +14,8 @@ A API tem como objetivo cumprir exigência do [Teste Técnico PHP da Muralis](./
 
 ## Preparativo para API
 ### SQL do banco de dados
+- nome do Banco de dados `phpmuralis`
+![banco de dados](./GIF/bd.png)
 ```
 CREATE TABLE tipos_pagamento (
     id int NOT NULL AUTO_INCREMENT,
